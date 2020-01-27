@@ -70,7 +70,7 @@ anim_bottom_10 <- loser_df %>%
   transition_states(year, transition_length = 1, state_length = 3) +
   view_follow(fixed_x = TRUE) +
   labs(
-    title = "UFC Top 10 All Time Losing Figthers : {closest_state}",
+    title = "UFC Top 10 All Time Losing Fighters : {closest_state}",
     subtitle = "",
     caption = "Number of losses"
   )

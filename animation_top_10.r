@@ -66,7 +66,7 @@ anim_top_10 <- winner_df %>%
   transition_states(year, transition_length = 1, state_length = 3) +
   view_follow(fixed_x = TRUE) +
   labs(
-    title = "UFC Top 10 All Time Winning Figthers : {closest_state}",
+    title = "UFC Top 10 All Time Winning Fighters : {closest_state}",
     subtitle = "",
     caption = "Number of wins"
   )
