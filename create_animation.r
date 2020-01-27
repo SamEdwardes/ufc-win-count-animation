@@ -38,25 +38,8 @@ winner_df <- df %>%
   filter(rank <= 10, wins_running_total > 0) %>%
   arrange(year, rank)
 
-# Create animation ----
-anim_top_10 <- winner_df %>%
-  ggplot(aes(rank,
-    group = winner,
-    fill = as.factor(winner),
-    colour = as.factor(winner)
-  )) +
-  geom_tile(aes(
-    y = wins_running_total / 2,
-    height = wins_running_total,
-    width = 0.9
-  ), alpha = 0.8, colour = NA) +
-  geom_text(aes(y = 0, label = paste(winner, " ")), vjust = 0.2, hjust = 1) +
-  geom_text(aes(y = wins_running_total, label = wins_label, hjust = 0)) +
-  coord_flip(clip = "off", expand = FALSE) +
-  scale_y_continuous(labels = scales::comma) +
-  scale_x_reverse() +
-  guides(color = FALSE, fill = FALSE) +
-  theme(
+# Animation theme ----
+animation_theme <- theme(
     axis.line = element_blank(),
     axis.text.x = element_blank(),
     axis.text.y = element_blank(),
@@ -70,22 +53,49 @@ anim_top_10 <- winner_df %>%
     panel.grid.minor = element_blank(),
     panel.grid.major.x = element_line(size = .1, color = "grey"),
     panel.grid.minor.x = element_line(size = .1, color = "grey"),
-    plot.title = element_text(size = 25, hjust = 0.5, face = "bold", colour = "grey", vjust = -1),
+    plot.title = element_text(size = 40, hjust = 0.5, face = "bold", colour = "Black", vjust = -1),
     plot.subtitle = element_text(size = 18, hjust = 0.5, face = "italic", color = "grey"),
     plot.caption = element_text(size = 8, hjust = 0.5, face = "italic", color = "grey"),
     plot.background = element_blank(),
-    plot.margin = margin(2, 2, 2, 4, "cm")
-  ) +
-  transition_states(year, transition_length = 2, state_length = 4) +
+    plot.margin = margin(2, 4, 2, 8, "cm") # top, right, bottom, left
+)
+
+# Create animation ----
+anim_top_10 <- winner_df %>%
+  filter(year >= 2000, year <= 2003) %>%
+  ggplot(aes(rank,
+    group = winner,
+    fill = as.factor(winner)
+    # colour = as.factor(winner)
+  )) +
+  # scale_color_viridis_d(name="") +
+  scale_fill_viridis_d(name="") +
+  geom_tile(aes(
+    y = wins_running_total / 2,
+    height = wins_running_total,
+    width = 0.9
+  ), alpha = 0.8, colour = NA) +
+  geom_text(aes(y = 0, label = paste(winner, " ")), vjust = 0.2, hjust = 1, size = 10) +
+  geom_text(aes(y = wins_running_total, label = wins_label, hjust = 0), size = 10) +
+  coord_flip(clip = "off", expand = FALSE) +
+  scale_y_continuous(labels = scales::comma) +
+  scale_x_reverse() +
+  guides(color = FALSE, fill = FALSE) +
+  animation_theme +
+  transition_states(year, transition_length = 1, state_length = 3) +
   view_follow(fixed_x = TRUE) +
   labs(
-    title = "Running Total Wins : {closest_state}",
-    subtitle = "Top 10 Fighers"
+    title = "UFC Top 10 All Time Winning Figthers : {closest_state}",
+    subtitle = ""
   )
 
+gif_seconds <- 5 # number of seconds
+gif_fps <- 5 # frames-per-second
+
 # Save gif file ----
-animate(anim_top_10, 200,
-  fps = 20, width = 1200, height = 1000,
+animate(anim_top_10, nframes = gif_seconds * gif_fps, 
+  start_pause = 3, end_pause = 3,
+  fps = gif_fps, width = 1200, height = 1000,
   renderer = gifski_renderer("ufc_top_10.gif")
 )
 
